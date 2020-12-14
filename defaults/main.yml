@@ -1,6 +1,9 @@
 ---
 # vars file for basesetup
+
+# set ansible username
 username: ansible_user
+# set ansible password
 my_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 # sudo_group: wheel
 create_ansible_user: true
