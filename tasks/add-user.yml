@@ -1,0 +1,19 @@
+- name: add ansible user
+  user:
+          name: ansible
+          system: yes
+          state: present
+          create_home: true
+- name: copy ssh key to ansible user
+  authorized_key:
+          user: ansible
+          state: present
+          key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+- name: allow ansible to use sudo nopassword
+  blockinfile:
+          path: /etc/sudoers.d/ansible
+          create: true
+          mode: 0400
+          block: |
+                  ## allow ansible sudo access
+                  ansible ALL=(ALL)       NOPASSWD: ALL

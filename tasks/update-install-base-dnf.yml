@@ -1,0 +1,17 @@
+- name: install epel
+  dnf:
+          name: epel-release
+          state: present
+  when: ansible_distribution == "CentOS"
+- name: update CentOS system
+  dnf:
+          name: 'sudo, git, python3-pip, fish, zsh, openssh, sudo'
+          state: present
+- name: update
+  dnf:
+          name: "*"
+          state: latest # noqa 403
+- name: install powerline-shell
+  pip:
+          name: powerline-shell
+          state: present

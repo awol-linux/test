@@ -1,0 +1,47 @@
+---
+# tasks file for basesetup
+
+- name: install base software Ubuntu
+  import_tasks: update-install-base-ubuntu.yml
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: install base software Redhat
+  import_tasks: update-install-base-dnf.yml
+  when:
+        - ansible_facts['os_family'] == "RedHat"
+        - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] | int >= 31
+
+- name: install base software Redhat
+  import_tasks: update-install-base-centos7.yml
+  when:
+        - ansible_facts['os_family'] == "RedHat"
+        - ansible_facts['distribution_major_version'] == "7"
+
+- name: install base software arch
+  import_tasks: update-install-base-arch.yml
+  when: ansible_facts['os_family'] == "Archlinux"
+
+- name: set sudo groups
+  import_tasks: set-sudo-groups.yml
+
+- name: add ansible user
+  import_tasks: add-user.yml
+  when: create_ansible_user|bool
+
+- name: create password file
+  import_tasks: create-password-tempfile.yml
+  delegate_to: 127.0.0.1
+
+- name: create user and password save data to "{{ tmp_file }}"
+  import_tasks: password.yml
+
+- name: install ohmyzsh
+  include_role:
+    name: gantsign.oh-my-zsh
+  vars:
+          become_user: "{{ username }}"
+          users:
+                  - username: "{{ username }}"
+
+- name: install powerline_shell
+  import_tasks: powerline_shell.yml
